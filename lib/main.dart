@@ -26,6 +26,10 @@ class DesignState extends State<Design> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        title: Text("SRK - Spenden"),
+      ),
       body: Stack(
         children: <Widget>[
           Offstage(
@@ -65,7 +69,7 @@ class DesignState extends State<Design> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
               canvasColor: /*CustomColors.nav*/ Colors.white,
-              primaryColor: Colors.green,
+              primaryColor: Colors.red,
               brightness: Brightness.light,
             ),
         child: BottomNavigationBar(
@@ -80,22 +84,22 @@ class DesignState extends State<Design> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text("Home", style: TextStyle(color: Color(0xFF000000))),
+              title: Text("Home"),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.monetization_on),
               title:
-                  Text("Spenden", style: TextStyle(color: Color(0xFF000000))),
+                  Text("Spenden"),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.group_work),
               title:
-                  Text("Projekte", style: TextStyle(color: Color(0xFF000000))),
+                  Text("Projekte"),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               title:
-                  Text("Settings", style: TextStyle(color: Color(0xFF000000))),
+                  Text("Settings"),
             ),
           ],
         ),
@@ -108,9 +112,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Test"),
-      ),
     );
   }
 }
@@ -119,9 +120,6 @@ class ProjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Projekte"),
-        ),
         body: ListView(
           children: generateCard(),
         ));
@@ -137,15 +135,24 @@ List<Widget> generateCard() {
       Card(
         child: Column(
           children: <Widget>[
-            Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
-          fit: BoxFit.fill),
+            SizedBox(
+              height: 140.0,
+              child: Stack(
+                children: <Widget>[
+                  Positioned.fill(
+                    child: Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
+          fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+            ),
             ListTile(
               title: Text(
-                "Projekt $i",
+                "Projekt ${i + 1}",
                 style: TextStyle(color: Colors.black),
               ),
               subtitle: Text(
-                "Gespendet: $i CHF",
+                "Gespendet: ${i + 1} CHF",
                 style: TextStyle(color: Colors.black),
               ),
               trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
@@ -165,9 +172,6 @@ class DonationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size.width / 2;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Spenden"),
-      ),
       body: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to
         // horizontal, this would produce 2 rows.
@@ -217,7 +221,7 @@ List<Widget> generateGrid(double size, BuildContext context) {
       onTap: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DetailsDonationPage("Spende $i")),
+          MaterialPageRoute(builder: (context) => DetailsDonationPage("Spende ${i + 1}")),
         );
       },
       child: Container(
@@ -235,7 +239,7 @@ List<Widget> generateGrid(double size, BuildContext context) {
                 decoration: BoxDecoration(color: Color.fromARGB(100, 0, 0, 0)),
                 child: ListTile(
                   title: Text(
-                    "Spende x",
+                    "Spende ${i + 1}",
                     style: TextStyle(color: Colors.white),
                   ),
                   subtitle: Text(
@@ -256,9 +260,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Test"),
-      ),
     );
   }
 }

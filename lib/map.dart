@@ -8,20 +8,19 @@ import 'package:map_view/polyline.dart';
 
 const API_KEY = "AIzaSyDrHKl8IxB4cGXIoELXQOzzZwiH1xtsRf4";
 
-
-
-
-
 class DetailsDonationPage extends StatefulWidget {
-
   String title;
+
   DetailsDonationPage(this.title);
+
   @override
-  _DetailsDonationPageState createState() => new _DetailsDonationPageState(title);
+  _DetailsDonationPageState createState() =>
+      new _DetailsDonationPageState(title);
 }
 
 class _DetailsDonationPageState extends State<DetailsDonationPage> {
   String title;
+
   _DetailsDonationPageState(this.title);
 
   MapView mapView = new MapView();
@@ -35,8 +34,8 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     new Marker(
       "1",
       "Something fragile!",
-      45.52480841512737,
-      -122.66201455146073,
+      46.942637,
+      7.510835,
       color: Colors.blue,
       draggable: true, //Allows the user to move the marker.
       markerIcon: new MarkerIcon(
@@ -101,8 +100,99 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("$title"),
+        backgroundColor: Colors.red,
       ),
-      body: RaisedButton(onPressed: () => showMap()),
+      body: Container(
+        padding:
+            EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 40.0),
+        child: Card(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 150.0,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                        child: Image.network(
+                      "https://r.hswstatic.com/w_907/gif/now-TwuUAjsF-coins_chuckcross_eyeem_gettyimagesjpg-1210-680.jpg",
+                      fit: BoxFit.cover,
+                    )),
+                  ],
+                ),
+              ),
+              Divider(),
+              Center(
+                child: Text(
+                  "Unterstützte Projekte",
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.attach_money),
+                      title: Text("Projekt 1"),
+                      subtitle: Text("1 CHF"),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.attach_money),
+                      title: Text("Projekt 3"),
+                      subtitle: Text("10 CHF"),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.attach_money),
+                      title: Text("Projekt 7"),
+                      subtitle: Text("25 CHF"),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 25.0),
+                    child: RaisedButton(
+                      onPressed: () {
+                        showMap();
+                      },
+                      child: Text("SPENDE AUF KARTE ZEIGEN", style: TextStyle(color: Colors.white),),
+                      color: Colors.red,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                      elevation: 10.0,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      /*Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          new Text('Top'),
+          new Expanded(
+            child: new Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 25.0),
+                child: RaisedButton(
+                  onPressed: () {showMap();},
+                  child: Text("SHOW DONATION ON MAP"),
+                  color: Colors.red,
+                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                  elevation: 10.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),*/
     );
   }
 
@@ -114,7 +204,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
             showMyLocationButton: true,
             showCompassButton: true,
             initialCameraPosition:
-            new CameraPosition(new Location(46.6622394, 7.7037007), 9.33),
+                new CameraPosition(new Location(46.6622394, 7.7037007), 9.33),
             hideToolbar: false,
             title: "Recently Visited"),
         toolbarActions: [new ToolbarAction("Close", 1)]);
