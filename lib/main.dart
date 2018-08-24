@@ -121,12 +121,12 @@ class ProjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
-          children: generateCard(),
+          children: generateCard(context),
         ));
   }
 }
 
-List<Widget> generateCard() {
+List<Widget> generateCard(BuildContext context) {
   List<Widget> list = new List<Widget>();
 
   for (var i = 0; i < images.length; i++) {
@@ -136,7 +136,7 @@ List<Widget> generateCard() {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 140.0,
+              height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
               child: Stack(
                 children: <Widget>[
                   Positioned.fill(
@@ -155,7 +155,12 @@ List<Widget> generateCard() {
                 "Gespendet: ${i + 1} CHF",
                 style: TextStyle(color: Colors.black),
               ),
-              trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
+              trailing: FlatButton(onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DetailsProjectPage()),
+                );
+              }, child: Text("Check me out!")),
             )
           ],
         ),
@@ -262,4 +267,17 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
     );
   }
+}
+
+class DetailsProjectPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+    appBar: AppBar(
+    title: Text("Project Details"),
+    backgroundColor: Colors.red,
+    ),
+    );
+  }
+
 }

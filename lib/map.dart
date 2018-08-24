@@ -120,31 +120,80 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
                   ],
                 ),
               ),
-              Divider(),
+              Padding(
+                padding: EdgeInsets.only(top: 10.0),
+              ),
               Center(
                 child: Text(
-                  "Unterstützte Projekte",
+                  "x unterstützte Projekte",
                   style: TextStyle(fontSize: 20.0),
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height > 600.0 ? 20.0 : 10.0),
+              ),
               Container(
-                padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                child: Column(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                height: MediaQuery.of(context).size.height > 600.0 ? 250.0 : 150.0,
+                child: PageView(
+                  scrollDirection: Axis.vertical,
+                  pageSnapping: false,
                   children: <Widget>[
-                    ListTile(
-                      leading: Icon(Icons.attach_money),
-                      title: Text("Projekt 1"),
-                      subtitle: Text("1 CHF"),
+                    Card(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 70.0,
+                            child: Stack(
+                              children: <Widget>[
+                                Positioned.fill(
+                                  child: Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
+                                      fit: BoxFit.cover),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            title: Text(
+                              "Projekt 8",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Text(
+                              "Gespendet: 7 CHF",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
+                          ),
+                        ],
+                      ),
                     ),
-                    ListTile(
-                      leading: Icon(Icons.attach_money),
-                      title: Text("Projekt 3"),
-                      subtitle: Text("10 CHF"),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.attach_money),
-                      title: Text("Projekt 7"),
-                      subtitle: Text("25 CHF"),
+                    Card(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 70.0,
+                            child: Stack(
+                              children: <Widget>[
+                                Positioned.fill(
+                                  child: Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
+                                      fit: BoxFit.cover),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            title: Text(
+                              "Projekt 8",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Text(
+                              "Gespendet: 7 CHF",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -206,8 +255,8 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
             initialCameraPosition:
                 new CameraPosition(new Location(46.6622394, 7.7037007), 9.33),
             hideToolbar: false,
-            title: "Recently Visited"),
-        toolbarActions: [new ToolbarAction("Close", 1)]);
+            title: "Spenden"),
+        toolbarActions: [new ToolbarAction("Schliessen", 1)]);
     StreamSubscription sub = mapView.onMapReady.listen((_) {
       mapView.setMarkers(_markers);
       mapView.setPolylines(_lines);
