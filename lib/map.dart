@@ -6,22 +6,26 @@ import 'package:map_view/map_view.dart';
 import 'package:map_view/polygon.dart';
 import 'package:map_view/polyline.dart';
 
-const API_KEY = "AIzaSyDrHKl8IxB4cGXIoELXQOzzZwiH1xtsRf4";
+const API_KEY = "AIzaSyDCZ0qsyI-KnQZWYzMBihVQzIZrYyD4OOU";
 
 class DetailsDonationPage extends StatefulWidget {
   String title;
+  bool donated;
 
-  DetailsDonationPage(this.title);
+  DetailsDonationPage(this.title, this.donated);
 
   @override
   _DetailsDonationPageState createState() =>
-      new _DetailsDonationPageState(title);
+      new _DetailsDonationPageState(title, donated);
 }
 
 class _DetailsDonationPageState extends State<DetailsDonationPage> {
   String title;
+  bool donated;
 
-  _DetailsDonationPageState(this.title);
+
+
+  _DetailsDonationPageState(this.title, this.donated);
 
   MapView mapView = new MapView();
   CameraPosition cameraPosition;
@@ -100,125 +104,57 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("$title"),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.red[900],
       ),
-      body: Container(
-        padding:
-            EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 40.0),
-        child: Card(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 150.0,
-                child: Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                        child: Image.network(
-                      "https://r.hswstatic.com/w_907/gif/now-TwuUAjsF-coins_chuckcross_eyeem_gettyimagesjpg-1210-680.jpg",
-                      fit: BoxFit.cover,
-                    )),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-              ),
-              Center(
-                child: Text(
-                  "x unterstützte Projekte",
-                  style: TextStyle(fontSize: 20.0),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height > 600.0 ? 20.0 : 10.0),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                height: MediaQuery.of(context).size.height > 600.0 ? 250.0 : 150.0,
-                child: PageView(
-                  scrollDirection: Axis.vertical,
-                  pageSnapping: false,
-                  children: <Widget>[
-                    Card(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 70.0,
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned.fill(
-                                  child: Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
-                                      fit: BoxFit.cover),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListTile(
-                            title: Text(
-                              "Projekt 8",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Text(
-                              "Gespendet: 7 CHF",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Card(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 70.0,
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned.fill(
-                                  child: Image.network("https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
-                                      fit: BoxFit.cover),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListTile(
-                            title: Text(
-                              "Projekt 8",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Text(
-                              "Gespendet: 7 CHF",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            trailing: FlatButton(onPressed: (){}, child: Text("Check me out!")),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 25.0),
-                    child: RaisedButton(
-                      onPressed: () {
-                        showMap();
-                      },
-                      child: Text("SPENDE AUF KARTE ZEIGEN", style: TextStyle(color: Colors.white),),
-                      color: Colors.red,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0)),
-                      elevation: 10.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      body: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 150.0,
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                    child: Image.network(
+                  "https://r.hswstatic.com/w_907/gif/now-TwuUAjsF-coins_chuckcross_eyeem_gettyimagesjpg-1210-680.jpg",
+                  fit: BoxFit.cover,
+                )),
+              ],
+            ),
           ),
-        ),
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+          ),
+          Center(
+            child: Text(
+              "unterstützte Projekte",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
+          ifDonatedWidgets(donated),
+          RaisedButton(
+            onPressed: () {
+              showMap();
+            },
+            child: Text(
+              "PROJEKT AUF KARTE ZEIGEN",
+              style: TextStyle(color: Colors.white),
+            ),
+            color: Colors.red,
+            shape: RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0)),
+            elevation: 10.0,
+          ),
+          Text("Description"),
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: Text("ListView Item"),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
 
       /*Column(
@@ -243,6 +179,23 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         ],
       ),*/
     );
+  }
+
+  Widget ifDonatedWidgets(bool donated) {
+    if (donated) {
+      return Column(
+        children: <Widget>[
+          Text("Projekt mit x CHF unterstüzt"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Validiert: "),
+              Icon(Icons.check),
+            ],
+          ),
+        ],
+      );
+    } else return Container();
   }
 
   showMap() {
