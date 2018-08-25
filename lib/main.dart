@@ -9,14 +9,18 @@ import 'pages/themen.dart';
 import 'pages/validation.dart';
 import 'pages/einstellungen.dart';
 import 'pages/spenden.dart';
+import 'blockchain/getter.dart';
+import 'package:http/http.dart' as http;
+import 'package:camera/camera.dart';
 
 double latitude;
 double longitude;
-bool isLocalBoy = true;
+List<CameraDescription> cameras;
 
-void main() {
+
+Future<Null> main() async{
   MapView.setApiKey(API_KEY);
-
+  cameras = await availableCameras();
   runApp(App());
 }
 
@@ -32,7 +36,6 @@ class App extends StatelessWidget {
 class Design extends StatefulWidget {
   State createState() => new DesignState();
 }
-
 
 class DesignState extends State<Design> {
 
@@ -52,6 +55,8 @@ class DesignState extends State<Design> {
     latitude = position.latitude;
     longitude = position.longitude;
   }
+
+
 
   ////////////////////
 
@@ -132,24 +137,11 @@ class DesignState extends State<Design> {
       ),
     );
 
-    if (isLocalBoy) {
-      offstageItems.add(
-        Offstage(
-          offstage: index != 3,
-          child: new TickerMode(
-            enabled: index == 3,
-            child: ValidationPage(),
-            //child: new MaterialApp(home: new ChatPage()),
-          ),
-        ),
-      );
-    }
-
     offstageItems.add(
       Offstage(
-        offstage: index != (isLocalBoy ? 4 : 3),
+        offstage: index != 3,
         child: new TickerMode(
-          enabled: index == (isLocalBoy ? 4 : 3),
+          enabled: index == 3,
           child: SettingsPage(),
           //child: new MaterialApp(home: new ChatPage()),
         ),
@@ -180,14 +172,6 @@ class DesignState extends State<Design> {
         title: Text("Beitragen"),
       ),
     );
-    if (isLocalBoy) {
-      bottomNavItems.add(
-        BottomNavigationBarItem(
-          icon: Icon(Icons.check),
-          title: Text("Validate"),
-        ),
-      );
-    }
     bottomNavItems.add(
       BottomNavigationBarItem(
         icon: Icon(Icons.person),
@@ -199,4 +183,15 @@ class DesignState extends State<Design> {
   }
 }
 
+/*Future<List<UserData>> fetchUsers() async {
+  List<UserData> users = [];
 
+  GetUserData().fetchUsers(http.Client()).then((data) {
+    users.addAll(data);
+    users.forEach((e) => print(e.name));
+  });
+
+  await Future.delayed(Duration(milliseconds: 50));
+
+  return users;
+}*/

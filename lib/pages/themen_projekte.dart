@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../map.dart';
 import 'donate.dart';
@@ -75,8 +77,8 @@ class PoolsProjectPage extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     Positioned.fill(
-                      child: Image.network(
-                          "https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
+                      child: Image.file(
+                        File('/data/user/0/com.example.bhsrkdonation/app_flutter/Pictures/flutter_test/1535217856703.jpg'),
                           fit: BoxFit.cover),
                     ),
                   ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'einstellungen.dart' as settings;
+import 'validation.dart';
+import '../blockchain/write_contribution.dart';
 
 class ContributePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,9 +15,9 @@ class ContributePage extends StatelessWidget {
               children: <Widget>[
                 Positioned.fill(
                     child: Image.network(
-                      "https://zapier.cachefly.net/storage/photos/ae82204e047eab5168a978353561adbe.jpg",
-                      fit: BoxFit.cover,
-                    )),
+                  "https://zapier.cachefly.net/storage/photos/ae82204e047eab5168a978353561adbe.jpg",
+                  fit: BoxFit.cover,
+                )),
               ],
             ),
           ),
@@ -42,7 +44,9 @@ class ContributePage extends StatelessWidget {
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                              height: MediaQuery.of(context).size.height > 600.0
+                                  ? 140.0
+                                  : 90.0,
                               child: Stack(
                                 children: <Widget>[
                                   Positioned.fill(
@@ -63,6 +67,10 @@ class ContributePage extends StatelessWidget {
                                 style: TextStyle(color: Colors.black),
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: validationForIsLocal(context),
+                            ),
                           ],
                         ),
                       ),
@@ -70,7 +78,9 @@ class ContributePage extends StatelessWidget {
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                              height: MediaQuery.of(context).size.height > 600.0
+                                  ? 140.0
+                                  : 90.0,
                               child: Stack(
                                 children: <Widget>[
                                   Positioned.fill(
@@ -90,6 +100,10 @@ class ContributePage extends StatelessWidget {
                                 "Distanz: y km",
                                 style: TextStyle(color: Colors.black),
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: validationForIsLocal(context),
                             ),
                           ],
                         ),
@@ -114,4 +128,34 @@ class ContributePage extends StatelessWidget {
       ),
     );
   }
+}
+
+List<Widget> validationForIsLocal(BuildContext context) {
+  List<Widget> buttons = [];
+
+  if (settings.isLocalBoy) {
+    buttons.add(
+      FlatButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ValidationPage()),
+          );
+        },
+        child: Text("Jetzt validieren!", style: TextStyle(color: Colors.red)),
+      ),
+    );
+  }
+  buttons.add(
+    FlatButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WriteContributionPage()),
+          );
+        },
+        child: Text("Beitragen")),
+  );
+
+  return buttons;
 }
