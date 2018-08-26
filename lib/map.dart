@@ -7,6 +7,7 @@ import 'package:map_view/map_view.dart';
 import 'package:map_view/polygon.dart';
 import 'package:map_view/polyline.dart';
 import 'blockchain/getter.dart';
+import 'blockchain/pusher.dart';
 import 'package:http/http.dart' as http;
 import 'main.dart' as main;
 
@@ -231,6 +232,17 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
       ),
     ];
 
+    List<Polyline> lineToProject = <Polyline>[
+    new Polyline(
+        "2",
+        <Location>[
+          new Location(main.latitude, main.longitude),
+          new Location(project.latitude, project.longitude),
+        ],
+        width: 15.0,
+        color: Colors.red[900]),
+  ];
+
     return Column(
       children: <Widget>[
         SizedBox(
@@ -257,7 +269,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         ifDonatedWidgets(donated, project.totalMoney, project.approvedMoney),
         RaisedButton(
           onPressed: () {
-            showMap(projectLocation);
+            showMap(projectLocation, lineToProject);
           },
           child: Text(
             "PROJEKT AUF KARTE ZEIGEN",
@@ -270,17 +282,69 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         ),
         Text(project.description),
         Expanded(
-          child: ListView(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: Text("Soon pics and texts from stories"),
-              ),
-            ],
+          child: Container(
+            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+            child: FutureBuilder(
+              future: GetStoryData(projectId).fetchStoryData(http.Client()),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data != null) {
+                    //return Text("${snapshot.data}");
+                    return ListView(children: _getStories(snapshot, context));
+                  } else {
+                    return new CircularProgressIndicator();
+                  }
+                } else {
+                  return Container();
+                }
+              },
+
+              //generatePoolCard(context),
+            ),
           ),
         ),
       ],
     );
+  }
+
+  List<Widget> _getStories(AsyncSnapshot snapshot, BuildContext context){
+    List<Widget> cards = [];
+
+    List<StoryData> topics = [];
+    topics = snapshot.data as List<StoryData>;
+
+    topics.forEach((project) {
+
+      var image = base64.decode(project.image);
+
+      cards.add(
+        Card(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height:
+                MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                      child: Image.memory(image, fit: BoxFit.cover),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  project.storytext,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    return cards;
   }
 
   //////////////////////////////
@@ -303,7 +367,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
       return Container();
   }
 
-  showMap(List<Marker> projectLocation) {
+  showMap(List<Marker> projectLocation, List<Polyline> lineToProject) {
     mapView.show(
         new MapOptions(
             mapViewType: MapViewType.satellite,
@@ -317,7 +381,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         toolbarActions: [new ToolbarAction("Schliessen", 1)]);
     StreamSubscription sub = mapView.onMapReady.listen((_) {
       mapView.setMarkers(projectLocation);
-      //mapView.setPolylines(_lines);
+      mapView.setPolylines(lineToProject);
       //mapView.setPolygons(_polygons);
     });
     compositeSubscription.add(sub);

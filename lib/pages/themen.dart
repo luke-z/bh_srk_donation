@@ -82,7 +82,7 @@ class ProjectPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DonatePage('${topic.name}')),
+                            builder: (context) => DonatePage(topic.name, topic.id)),
                       );
                     },
                     child: Text("Jetzt spenden!",
@@ -145,7 +145,7 @@ class ProjectPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DonatePage('${topic.name}')),
+                            builder: (context) => DonatePage(topic.name, topic.id)),
                       );
                     },
                     child: Text("Jetzt spenden!",

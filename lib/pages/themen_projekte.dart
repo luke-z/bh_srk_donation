@@ -57,6 +57,7 @@ class TopicProjectPage extends StatelessWidget {
 
     topics = snapshot.data as List<TopicProjectData>;
 
+
     cards.add(
       Container(
         padding:
@@ -67,7 +68,7 @@ class TopicProjectPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      DonatePage('Spenden an Thema ${themaName}')),
+                      DonatePage('Spenden an Thema ${themaName}', themaId)),
             );
           },
           child: Text(
@@ -146,7 +147,7 @@ class TopicProjectPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        DonatePage('Spenden an Thema ${themaName}')),
+                        DonatePage('Spenden an Thema ${themaName}', project.topicId)),
               );
             },
             child: Text(

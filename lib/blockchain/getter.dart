@@ -208,7 +208,7 @@ class GetProjectData {
 
   GetProjectData(this.projectId);
 
-  Future<List<ProjectData>> fetchProjectData(http.Client client) async {
+  Future<ProjectData> fetchProjectData(http.Client client) async {
     final response = await client
         .get('https://charitypath.blockchain2b.ch/projects/' + projectId);
 
@@ -218,12 +218,12 @@ class GetProjectData {
     return parseProjectData(response.body);
   }
 
-  List<ProjectData> parseProjectData(String responseBody) {
-    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+  ProjectData parseProjectData(String responseBody) {
+    Map<String, dynamic> projectData = json.decode(responseBody);
 
-    return parsed
-        .map<ProjectData>((json) => ProjectData.fromJson(json))
-        .toList();
+    var object = ProjectData.fromJson(projectData);
+
+    return object; ////////FIX THE FOCKIN PROBLEM
   }
 }
 
@@ -252,6 +252,7 @@ class ProjectData {
       this.approvedMoney});
 
   factory ProjectData.fromJson(Map<String, dynamic> json) {
+    print(json);
     return ProjectData(
         id: json['id'] as String,
         topicId: json['topicId'] as String,

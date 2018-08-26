@@ -169,7 +169,6 @@ class CreateContributionState extends State<CreateContribution> {
     http.post('https://charitypath.blockchain2b.ch/stories', headers: {HttpHeaders.CONTENT_TYPE: "application/json"}, body: json).then((response){
       print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
-      if (response.statusCode == 200) Navigator.pop(context);
     });
   }
 }

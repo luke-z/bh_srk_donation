@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'pages/contribute.dart';
 import 'pages/themen.dart';
 import 'pages/validation.dart';
-import 'pages/einstellungen.dart';
+import 'pages/einstellungen.dart' as settings;
 import 'pages/spenden.dart';
 import 'blockchain/getter.dart';
 import 'package:http/http.dart' as http;
@@ -17,10 +17,14 @@ double latitude;
 double longitude;
 List<CameraDescription> cameras;
 
-
-Future<Null> main() async{
+Future<Null> main() async {
   MapView.setApiKey(API_KEY);
   cameras = await availableCameras();
+
+  GetUserData().fetchUsers(http.Client()).then((user) {
+    settings.currentUser = user.elementAt(0);
+  });
+
   runApp(App());
 }
 
@@ -38,7 +42,6 @@ class Design extends StatefulWidget {
 }
 
 class DesignState extends State<Design> {
-
   int index = 0;
 
   //////////////////
@@ -55,8 +58,6 @@ class DesignState extends State<Design> {
     latitude = position.latitude;
     longitude = position.longitude;
   }
-
-
 
   ////////////////////
 
@@ -142,7 +143,7 @@ class DesignState extends State<Design> {
         offstage: index != 3,
         child: new TickerMode(
           enabled: index == 3,
-          child: SettingsPage(),
+          child: settings.SettingsPage(),
           //child: new MaterialApp(home: new ChatPage()),
         ),
       ),
