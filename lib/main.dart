@@ -158,7 +158,7 @@ class DesignState extends State<Design> {
     bottomNavItems.add(
       BottomNavigationBarItem(
         icon: Icon(Icons.group_work),
-        title: Text("Projekte"),
+        title: Text("Themen"),
       ),
     );
     bottomNavItems.add(
