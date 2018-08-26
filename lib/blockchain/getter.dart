@@ -306,3 +306,47 @@ class ProjectData {
     return approvedMoney;
   }
 }
+
+class GetLocationData {
+  Future<List<LocationData>> fetchLocations(http.Client client) async {
+    final response =
+    await client.get('https://charitypath.blockchain2b.ch/locations');
+
+    //await Future.delayed(Duration(milliseconds: 50));
+
+    return parseStrings(response.body);
+  }
+
+  List<LocationData> parseStrings(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+
+    return parsed.map<LocationData>((json) => LocationData.fromJson(json)).toList();
+  }
+}
+
+class LocationData {
+  String id;
+  double longitude;
+  double latitude;
+
+  LocationData({this.id, this.longitude, this.latitude});
+
+  factory LocationData.fromJson(Map<String, dynamic> json) {
+    return LocationData(
+        id: json['id'] as String,
+        longitude: json['longitude'] as double,
+        latitude: json['latitude'] as double);
+  }
+
+  String getId() {
+    return id;
+  }
+
+  double getLongitude(){
+    return longitude;
+  }
+
+  double getLatitude(){
+    return latitude;
+  }
+}

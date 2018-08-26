@@ -209,7 +209,6 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
   ////////////////////////////
 
   Column _getData(AsyncSnapshot snapshot, BuildContext context) {
-
     ProjectData project;
 
     project = snapshot.data;
@@ -233,15 +232,15 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     ];
 
     List<Polyline> lineToProject = <Polyline>[
-    new Polyline(
-        "2",
-        <Location>[
-          new Location(main.latitude, main.longitude),
-          new Location(project.latitude, project.longitude),
-        ],
-        width: 15.0,
-        color: Colors.red[900]),
-  ];
+      new Polyline(
+          "2",
+          <Location>[
+            new Location(main.latitude, main.longitude),
+            new Location(project.latitude, project.longitude),
+          ],
+          width: 15.0,
+          color: Colors.red[900]),
+    ];
 
     return Column(
       children: <Widget>[
@@ -267,6 +266,9 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
           ),
         ),
         ifDonatedWidgets(donated, project.totalMoney, project.approvedMoney),
+        Padding(
+          padding: EdgeInsets.only(top: 20.0),
+        ),
         RaisedButton(
           onPressed: () {
             showMap(projectLocation, lineToProject);
@@ -280,7 +282,15 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
               borderRadius: new BorderRadius.circular(30.0)),
           elevation: 10.0,
         ),
-        Text(project.description),
+        Padding(
+          padding: EdgeInsets.only(top: 25.0),
+        ),
+        Container(
+            padding: EdgeInsets.only(left: 25.0, right: 25.0),
+            child: Text(project.description, style: TextStyle(fontSize: 15.0),)),
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+        ),
         Expanded(
           child: Container(
             padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -307,14 +317,13 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     );
   }
 
-  List<Widget> _getStories(AsyncSnapshot snapshot, BuildContext context){
+  List<Widget> _getStories(AsyncSnapshot snapshot, BuildContext context) {
     List<Widget> cards = [];
 
     List<StoryData> topics = [];
     topics = snapshot.data as List<StoryData>;
 
     topics.forEach((project) {
-
       var image = base64.decode(project.image);
 
       cards.add(
@@ -323,7 +332,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
             children: <Widget>[
               SizedBox(
                 height:
-                MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                    MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
                 child: Stack(
                   children: <Widget>[
                     Positioned.fill(

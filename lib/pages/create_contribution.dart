@@ -160,7 +160,7 @@ class CreateContributionState extends State<CreateContribution> {
     //path.imagePath = filePath;
     String base64Image = base64Encode(image.readAsBytesSync());
 
-    StoryData story = StoryData(image: base64Image, storytext: myController.text, longitude: main.longitude, latitude: main.latitude, userId: settings.currentUser.id, projectId: '2366e7d2-1eea-295c-76b2-b64a3f89d732');
+    StoryData story = StoryData(image: base64Image, storytext: myController.text, userId: settings.currentUser.id, projectId: '2366e7d2-1eea-295c-76b2-b64a3f89d732');
 
     String json = jsonEncode(story);
 
@@ -169,6 +169,9 @@ class CreateContributionState extends State<CreateContribution> {
     http.post('https://charitypath.blockchain2b.ch/stories', headers: {HttpHeaders.CONTENT_TYPE: "application/json"}, body: json).then((response){
       print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
+
+      if(response.statusCode == 200) Navigator.pop;
     });
+
   }
 }

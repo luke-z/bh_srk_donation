@@ -101,10 +101,16 @@ class TopicProjectPage extends StatelessWidget {
                   ],
                 ),
               ),
+              Padding(padding: EdgeInsets.only(top:10.0),),
               ListTile(
-                title: Text(
-                  project.name,
-                  style: TextStyle(color: Colors.black),
+                title: Column(
+                  children: <Widget>[
+                    Text(
+                      project.name,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5.0),),
+                  ],
                 ),
                 subtitle: Text(
                   '${project.description}',
@@ -179,10 +185,16 @@ class TopicProjectPage extends StatelessWidget {
                   ],
                 ),
               ),
+              Padding(padding: EdgeInsets.only(top:10.0),),
               ListTile(
-                title: Text(
-                  project.name,
-                  style: TextStyle(color: Colors.black),
+                title: Column(
+                  children: <Widget>[
+                    Text(
+                      project.name,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5.0),),
+                  ],
                 ),
                 subtitle: Text(
                   '${project.description}',
