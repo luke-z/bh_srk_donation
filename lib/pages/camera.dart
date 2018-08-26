@@ -5,13 +5,14 @@ import 'package:camera/camera.dart';
 import '../main.dart' as main;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
+import 'create_contribution.dart' as path;
 
-class WriteContributionPage extends StatefulWidget {
+class CameraPage extends StatefulWidget {
   @override
-  WriteContributionPageState createState() => new WriteContributionPageState();
+  CameraPageState createState() => new CameraPageState();
 }
 
-class WriteContributionPageState extends State<WriteContributionPage> {
+class CameraPageState extends State<CameraPage> {
   CameraController controller;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -114,13 +115,16 @@ class WriteContributionPageState extends State<WriteContributionPage> {
         if (filePath != null) {
           showInSnackBar('Picture saved to $filePath');
           File recentPic = File(filePath.toString());
-          print(filePath);
+          //print(filePath);
           //List<int> recentPicPath = recentPic.readAsBytesSync();
-          String base64Image = base64Encode(recentPic.readAsBytesSync());
-          print(base64Image.length);
+          //String base64Image = base64Encode(recentPic.readAsBytesSync());
+          //path.imagePath = filePath;
+          //path.base64Image = base64Encode(recentPic.readAsBytesSync());
         }
       }
+      Navigator.pop(context, imagePath);
     });
+
   }
 
   String timestamp() => new DateTime.now().millisecondsSinceEpoch.toString();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'einstellungen.dart' as settings;
 import 'validation.dart';
-import '../blockchain/write_contribution.dart';
+import 'create_contribution.dart';
 
 class ContributePage extends StatelessWidget {
   @override
@@ -151,7 +151,7 @@ List<Widget> validationForIsLocal(BuildContext context) {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WriteContributionPage()),
+            MaterialPageRoute(builder: (context) => CreateContribution()),
           );
         },
         child: Text("Beitragen")),

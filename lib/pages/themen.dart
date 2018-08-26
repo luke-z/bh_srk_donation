@@ -8,48 +8,36 @@ import '../blockchain/getter.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
-List<Widget> cardsBuffer = [];
-
-List<String> images = [
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-];
+List<TopicData> dataBuffer = [];
 
 class ProjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: cardsBuffer.isEmpty ? FutureBuilder(
-          future: GetTopicData().fetchTopics(http.Client()),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data != null) {
-                //return Text("${snapshot.data}");
-                return ListView(
-                  children: _getData(snapshot, context),
-                );
-              } else {
-                return new CircularProgressIndicator();
-              }
-            } else {
-              return Container();
-            }
-          },
+        child: dataBuffer.isEmpty
+            ? FutureBuilder(
+                future: GetTopicData().fetchTopics(http.Client()),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data != null) {
+                      //return Text("${snapshot.data}");
+                      return ListView(
+                        children: _getData(snapshot, context),
+                      );
+                    } else {
+                      return new CircularProgressIndicator();
+                    }
+                  } else {
+                    return Container();
+                  }
+                },
 
-          //generatePoolCard(context),
-        ) : ListView(
-          children: cardsBuffer,
-        ),
+                //generatePoolCard(context),
+              )
+            : ListView(
+                children: _getBufferedData(context),
+              ),
       ),
     );
   }
@@ -60,12 +48,10 @@ class ProjectPage extends StatelessWidget {
 
     topics = snapshot.data as List<TopicData>;
 
-    topics.forEach((topic){
-
+    topics.forEach((topic) {
       var image = base64.decode(topic.imageBase64);
 
-      cards.add(
-      Card(
+      cards.add(Card(
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -73,9 +59,7 @@ class ProjectPage extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Positioned.fill(
-                    child: Image.memory(
-                        image,
-                        fit: BoxFit.cover),
+                    child: Image.memory(image, fit: BoxFit.cover),
                   ),
                 ],
               ),
@@ -97,7 +81,8 @@ class ProjectPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DonatePage('${topic.name}')),
+                        MaterialPageRoute(
+                            builder: (context) => DonatePage('${topic.name}')),
                       );
                     },
                     child: Text("Jetzt spenden!",
@@ -107,7 +92,8 @@ class ProjectPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PoolsProjectPage(1)),
+                            builder: (context) =>
+                                TopicProjectPage(topic.id, topic.name)),
                       );
                     },
                     child: Text("Details")),
@@ -118,18 +104,17 @@ class ProjectPage extends StatelessWidget {
       ));
     });
 
-    cardsBuffer = cards;
+    dataBuffer.addAll(topics);
     return cards;
   }
 
-}
+  List<Widget> _getBufferedData(BuildContext context) {
+    List<Widget> cards = [];
 
-List<Widget> generatePoolCard(BuildContext context) {
-  List<Widget> list = new List<Widget>();
+    dataBuffer.forEach((topic) {
+      var image = base64.decode(topic.imageBase64);
 
-  for (var i = 0; i < images.length; i++) {
-    list.add(
-      Card(
+      cards.add(Card(
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -137,20 +122,18 @@ List<Widget> generatePoolCard(BuildContext context) {
               child: Stack(
                 children: <Widget>[
                   Positioned.fill(
-                    child: Image.network(
-                        "https://thumbor.forbes.com/thumbor/1280x868/https%3A%2F%2Fblogs-images.forbes.com%2Fannabel%2Ffiles%2F2018%2F02%2FLouisville_Skyline-1200x801.jpg",
-                        fit: BoxFit.cover),
+                    child: Image.memory(image, fit: BoxFit.cover),
                   ),
                 ],
               ),
             ),
             ListTile(
               title: Text(
-                "Pool ${i + 1}",
+                topic.name,
                 style: TextStyle(color: Colors.black),
               ),
               subtitle: Text(
-                "Kurz - Details zu Pool",
+                topic.description,
                 style: TextStyle(color: Colors.black),
               ),
             ),
@@ -161,7 +144,8 @@ List<Widget> generatePoolCard(BuildContext context) {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DonatePage('Spenden an Thema ${i + 1}')),
+                        MaterialPageRoute(
+                            builder: (context) => DonatePage('${topic.name}')),
                       );
                     },
                     child: Text("Jetzt spenden!",
@@ -171,7 +155,8 @@ List<Widget> generatePoolCard(BuildContext context) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PoolsProjectPage(i)),
+                            builder: (context) =>
+                                TopicProjectPage(topic.id, topic.name)),
                       );
                     },
                     child: Text("Details")),
@@ -179,8 +164,8 @@ List<Widget> generatePoolCard(BuildContext context) {
             ),
           ],
         ),
-      ),
-    );
+      ));
+    });
+    return cards;
   }
-  return list;
 }

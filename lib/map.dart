@@ -1,31 +1,37 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:map_view/figure_joint_type.dart';
 import 'package:map_view/map_view.dart';
 import 'package:map_view/polygon.dart';
 import 'package:map_view/polyline.dart';
+import 'blockchain/getter.dart';
+import 'package:http/http.dart' as http;
+import 'main.dart' as main;
 
 const API_KEY = "AIzaSyDCZ0qsyI-KnQZWYzMBihVQzIZrYyD4OOU";
 
 class DetailsDonationPage extends StatefulWidget {
   String title;
   bool donated;
+  String projectId;
 
-  DetailsDonationPage(this.title, this.donated);
+  DetailsDonationPage(this.title, this.donated, this.projectId);
+
+  DetailsDonationPage.other(this.title, this.donated);
 
   @override
   _DetailsDonationPageState createState() =>
-      new _DetailsDonationPageState(title, donated);
+      new _DetailsDonationPageState(title, donated, projectId);
 }
 
 class _DetailsDonationPageState extends State<DetailsDonationPage> {
   String title;
   bool donated;
+  String projectId;
 
-
-
-  _DetailsDonationPageState(this.title, this.donated);
+  _DetailsDonationPageState(this.title, this.donated, this.projectId);
 
   MapView mapView = new MapView();
   CameraPosition cameraPosition;
@@ -34,7 +40,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
   Uri staticMapUri;
 
   //Marker bubble
-  List<Marker> _markers = <Marker>[
+  /* List<Marker> _markers = <Marker>[
     new Marker(
       "1",
       "Something fragile!",
@@ -48,10 +54,10 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         height: 75.0,
       ),
     ),
-  ];
+  ];*/
 
   //Line
-  List<Polyline> _lines = <Polyline>[
+  /*List<Polyline> _lines = <Polyline>[
     new Polyline(
         "11",
         <Location>[
@@ -60,10 +66,10 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         ],
         width: 15.0,
         color: Colors.blue),
-  ];
+  ];*/
 
   //Drawing
-  List<Polygon> _polygons = <Polygon>[
+  /*List<Polygon> _polygons = <Polygon>[
     new Polygon(
         "111",
         <Location>[
@@ -74,7 +80,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         strokeWidth: 5.0,
         strokeColor: Colors.red,
         fillColor: Color.fromARGB(75, 255, 0, 0)),
-  ];
+  ];*/
 
   @override
   initState() {
@@ -106,7 +112,25 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
         title: Text("$title"),
         backgroundColor: Colors.red[900],
       ),
-      body: Column(
+      body: FutureBuilder(
+        future: GetProjectData(projectId).fetchProjectData(http.Client()),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data != null) {
+              //return Text("${snapshot.data}");
+              return _getData(snapshot, context);
+            } else {
+              return new CircularProgressIndicator();
+            }
+          } else {
+            return Container();
+          }
+        },
+
+        //generatePoolCard(context),
+      ),
+
+      /*Column(
         children: <Widget>[
           SizedBox(
             height: 150.0,
@@ -155,7 +179,7 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
             ),
           ),
         ],
-      ),
+      ),*/
 
       /*Column(
         mainAxisSize: MainAxisSize.max,
@@ -181,39 +205,120 @@ class _DetailsDonationPageState extends State<DetailsDonationPage> {
     );
   }
 
-  Widget ifDonatedWidgets(bool donated) {
+  ////////////////////////////
+
+  Column _getData(AsyncSnapshot snapshot, BuildContext context) {
+
+    ProjectData project;
+
+    project = snapshot.data;
+
+    var image = base64.decode(project.imageBase64);
+
+    List<Marker> projectLocation = <Marker>[
+      new Marker(
+        "1",
+        "${project.name}",
+        project.latitude,
+        project.longitude,
+        color: Colors.red[900],
+        draggable: true, //Allows the user to move the marker.
+        markerIcon: new MarkerIcon(
+          "images/flower_vase.png",
+          width: 112.0,
+          height: 75.0,
+        ),
+      ),
+    ];
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 150.0,
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                  child: Image.memory(
+                image,
+                fit: BoxFit.cover,
+              )),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+        ),
+        Center(
+          child: Text(
+            project.name,
+            style: TextStyle(fontSize: 20.0),
+          ),
+        ),
+        ifDonatedWidgets(donated, project.totalMoney, project.approvedMoney),
+        RaisedButton(
+          onPressed: () {
+            showMap(projectLocation);
+          },
+          child: Text(
+            "PROJEKT AUF KARTE ZEIGEN",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Colors.red,
+          shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0)),
+          elevation: 10.0,
+        ),
+        Text(project.description),
+        Expanded(
+          child: ListView(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Text("Soon pics and texts from stories"),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  //////////////////////////////
+
+  Widget ifDonatedWidgets(bool donated, int totalMoney, int approvedMoney) {
     if (donated) {
       return Column(
         children: <Widget>[
-          Text("Projekt mit x CHF unterstüzt"),
+          Text("Projekt mit $totalMoney CHF unterstüzt"),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Validiert: "),
+              Text("Validiert: $approvedMoney"),
               Icon(Icons.check),
             ],
           ),
         ],
       );
-    } else return Container();
+    } else
+      return Container();
   }
 
-  showMap() {
+  showMap(List<Marker> projectLocation) {
     mapView.show(
         new MapOptions(
             mapViewType: MapViewType.satellite,
             showUserLocation: true,
             showMyLocationButton: true,
             showCompassButton: true,
-            initialCameraPosition:
-                new CameraPosition(new Location(46.6622394, 7.7037007), 9.33),
+            initialCameraPosition: new CameraPosition(
+                new Location(main.latitude, main.longitude), 9.33),
             hideToolbar: false,
             title: "Spenden"),
         toolbarActions: [new ToolbarAction("Schliessen", 1)]);
     StreamSubscription sub = mapView.onMapReady.listen((_) {
-      mapView.setMarkers(_markers);
-      mapView.setPolylines(_lines);
-      mapView.setPolygons(_polygons);
+      mapView.setMarkers(projectLocation);
+      //mapView.setPolylines(_lines);
+      //mapView.setPolygons(_polygons);
     });
     compositeSubscription.add(sub);
     sub = mapView.onLocationUpdated.listen((location) {

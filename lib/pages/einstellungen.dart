@@ -11,6 +11,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 bool isLocalBoy = false;
+UserData currentUser;
+List<UserData> allUsers = [];
 
 class SettingsPageState extends State<SettingsPage> {
 
@@ -72,6 +74,8 @@ class SettingsPageState extends State<SettingsPage> {
       i++;
     });
 
+    allUsers.addAll(users);
+
     return tiles;
     //turn the snapshot to a list of widget as you like...
   }
@@ -84,15 +88,19 @@ class SettingsPageState extends State<SettingsPage> {
       switch (_radioValue) {
         case 0:
           _result = 0.0;
+          currentUser = allUsers[0];
           break;
         case 1:
           _result = 1.0;
+          currentUser = allUsers[1];
           break;
         case 2:
           _result = 2.0;
+          currentUser = allUsers[2];
           break;
         case 3:
           _result = 3.0;
+          currentUser = allUsers[3];
           break;
       }
     });

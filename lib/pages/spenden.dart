@@ -10,9 +10,6 @@ class DonationPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          ListTile(
-            title: Text("Nicht zugewiesen: x chf"),
-          ),
           Expanded(
             child: GridView.count(
               // Create a grid with 2 columns. If you change the scrollDirection to
@@ -68,7 +65,7 @@ List<Widget> generateGrid(double size, BuildContext context) {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  DetailsDonationPage("Spende ${i + 1}", true)),
+                  DetailsDonationPage.other("Spende ${i + 1}", true)),
         );
       },
       child: Container(

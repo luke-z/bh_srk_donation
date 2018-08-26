@@ -1,60 +1,75 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import '../map.dart';
 import 'donate.dart';
+import 'package:http/http.dart' as http;
+import '../blockchain/getter.dart';
 
-List<String> images = [
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-  "https://tpmbc.com/wp-content/uploads/2018/02/DonationIcon.png",
-];
+List<TopicProjectData> dataBuffer = [];
 
-class PoolsProjectPage extends StatelessWidget {
+class TopicProjectPage extends StatelessWidget {
+  String themaId;
+  String themaName;
 
-  int thema;
-
-  PoolsProjectPage(this.thema);
+  TopicProjectPage(this.themaId, this.themaName);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pool ${thema + 1}"),
+        title: Text(themaName),
         backgroundColor: Colors.red[900],
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView(
-              children: generateProjectCard(context),
-            ),
-          ),
-        ],
+      body: Container(
+        child: dataBuffer.isEmpty
+            ? FutureBuilder(
+                future: GetTopicProjectData(themaId)
+                    .fetchTopicProjectData(http.Client()),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data != null) {
+                      //return Text("${snapshot.data}");
+                      return ListView(
+                        children: _getData(snapshot, context),
+                      );
+                    } else {
+                      return new CircularProgressIndicator();
+                    }
+                  } else {
+                    return Container();
+                  }
+                },
+
+                //generatePoolCard(context),
+              )
+            : ListView(
+                children: _getBufferedData(context),
+              ),
       ),
     );
   }
 
-  List<Widget> generateProjectCard(BuildContext context) {
-    List<Widget> list = [];
+  List<Widget> _getData(AsyncSnapshot snapshot, BuildContext context) {
+    List<Widget> cards = [];
+    List<TopicProjectData> topics = [];
 
-    list.add(
+    topics = snapshot.data as List<TopicProjectData>;
+
+    cards.add(
       Container(
         padding:
-        EdgeInsets.only(top: 15.0, bottom: 15.0, left: 50.0, right: 50.0),
+            EdgeInsets.only(top: 15.0, bottom: 15.0, left: 50.0, right: 50.0),
         child: RaisedButton(
-          onPressed: () {Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DonatePage('Spenden an Thema ${thema + 1}')),
-          );},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      DonatePage('Spenden an Thema ${themaName}')),
+            );
+          },
           child: Text(
             "JETZT SPENDEN",
             style: TextStyle(color: Colors.white),
@@ -67,30 +82,31 @@ class PoolsProjectPage extends StatelessWidget {
       ),
     );
 
-    for (var i = 0; i < images.length; i++) {
-      list.add(
+    topics.forEach((project) {
+      var image = base64.decode(project.imageBase64);
+
+      cards.add(
         Card(
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                height:
+                    MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
                 child: Stack(
                   children: <Widget>[
                     Positioned.fill(
-                      child: Image.file(
-                        File('/data/user/0/com.example.bhsrkdonation/app_flutter/Pictures/flutter_test/1535217856703.jpg'),
-                          fit: BoxFit.cover),
+                      child: Image.memory(image, fit: BoxFit.cover),
                     ),
                   ],
                 ),
               ),
               ListTile(
                 title: Text(
-                  "Projekt ${i + 1}",
+                  project.name,
                   style: TextStyle(color: Colors.black),
                 ),
                 subtitle: Text(
-                  "Gespendet: ${i + 1} CHF",
+                  '${project.description}',
                   style: TextStyle(color: Colors.black),
                 ),
               ),
@@ -102,7 +118,7 @@ class PoolsProjectPage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                DetailsDonationPage("Details", false)),
+                                DetailsDonationPage("Details", false, project.id)),
                       );
                     },
                     child: Text("Details")),
@@ -111,8 +127,86 @@ class PoolsProjectPage extends StatelessWidget {
           ),
         ),
       );
-    }
-    return list;
+    });
+
+    return cards;
+  }
+
+  List<Widget> _getBufferedData(BuildContext context) {
+    List<Widget> cards = [];
+
+    dataBuffer.forEach((project) {
+      cards.add(
+        Container(
+          padding:
+              EdgeInsets.only(top: 15.0, bottom: 15.0, left: 50.0, right: 50.0),
+          child: RaisedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DonatePage('Spenden an Thema ${themaName}')),
+              );
+            },
+            child: Text(
+              "JETZT SPENDEN",
+              style: TextStyle(color: Colors.white),
+            ),
+            color: Colors.red,
+            shape: RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0)),
+            elevation: 5.0,
+          ),
+        ),
+      );
+
+      var image = base64.decode(project.imageBase64);
+
+      cards.add(
+        Card(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height:
+                    MediaQuery.of(context).size.height > 600.0 ? 140.0 : 90.0,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                      child: Image.memory(image, fit: BoxFit.cover),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  project.name,
+                  style: TextStyle(color: Colors.black),
+                ),
+                subtitle: Text(
+                  '${project.description}',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FlatButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DetailsDonationPage("Details", false, project.id)),
+                      );
+                    },
+                    child: Text("Details")),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    return cards;
   }
 }
-
